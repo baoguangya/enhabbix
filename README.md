@@ -1,6 +1,8 @@
 # enhabbix
 Enhanced version of Zabbix 5.0
 
+1. Expand the cache limit by 4 times
+
 parameters  | original range | expanded range
 ------------|----------------|----------------
 CacheSize|128K-8G|128K-32G
@@ -10,6 +12,7 @@ TrendCacheSize|128K-2G|128K-8G
 ValueCacheSize|0,128K-64G|0,128K-256G
 VMwareCacheSize|256K-2G|256K-8G
 
+2. Expand the limit of start processes number by 10 times
 
 parameters  | original range | expanded range
 ------------|----------------|----------------
