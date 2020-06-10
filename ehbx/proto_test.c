@@ -47,18 +47,36 @@ int main(int argc, char **argv){
   char *arg;
   int s, conn, res, uncomp, comp;
   struct sockaddr_in addr;
-  char *ip, *port;
+  char *ip, *port, *sep;
   char out[65536];
   uLongf sz_out,sz_comp;
   Bytef *buf_comp;
 
   ip = argv[1];
+  if (argc < 2){
+      printf("usage: ./<command> <ip:port> '<msg>'");
+      exit(0);
+  } else {
+      if (NULL == (sep = strchr(argv[1],':')))
+      {
+          ip = argv[1];
+          port = "10051";
+      } else {
+          ip = (char *)malloc(sep - argv[1] + 1);
+          memcpy(ip,argv[1],sep-argv[1]);
+          ip[sep-argv[1]]='\0';
+          port = (char *)malloc(strlen(sep));
+          strncpy(port, sep+1, strlen(sep));
+      }
+  }
+      
   if (argc < 3){
     arg = "";
   } else {
     arg = argv[2];
   }
 
+  
   memcpy(buf_write + offset,hd,4);
   offset += 4;
 
