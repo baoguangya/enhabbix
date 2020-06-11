@@ -33,6 +33,7 @@ static char		log_filename[MAX_STRING_LEN];
 static int		log_type = LOG_TYPE_UNDEFINED;
 static zbx_mutex_t	log_access = ZBX_MUTEX_NULL;
 int			zbx_log_level = LOG_LEVEL_WARNING;
+static char * ehbx_log_levels[6] = {"INFO","CRITICAL","ERROR","WARNING","DEBUG","TRACE"};
 
 #ifdef _WINDOWS
 #	define LOCK_LOG		zbx_mutex_lock(log_access)
@@ -385,7 +386,7 @@ void	__zbx_zabbix_log(int level, const char *fmt, ...)
 			zbx_get_time(&tm, &milliseconds, NULL);
 
 			fprintf(log_file,
-					"%6li:%.4d%.2d%.2d:%.2d%.2d%.2d.%03ld ",
+					"%6li:%.4d%.2d%.2d:%.2d%.2d%.2d.%03ld %-9s ",
 					zbx_get_thread_id(),
 					tm.tm_year + 1900,
 					tm.tm_mon + 1,
@@ -393,7 +394,7 @@ void	__zbx_zabbix_log(int level, const char *fmt, ...)
 					tm.tm_hour,
 					tm.tm_min,
 					tm.tm_sec,
-					milliseconds
+					milliseconds, ehbx_log_levels[level == 127 ? 0 : level]
 					);
 
 			va_start(args, fmt);
@@ -430,7 +431,7 @@ void	__zbx_zabbix_log(int level, const char *fmt, ...)
 		zbx_get_time(&tm, &milliseconds, NULL);
 
 		fprintf(stdout,
-				"%6li:%.4d%.2d%.2d:%.2d%.2d%.2d.%03ld ",
+				"%6li:%.4d%.2d%.2d:%.2d%.2d%.2d.%03ld %-9s ",
 				zbx_get_thread_id(),
 				tm.tm_year + 1900,
 				tm.tm_mon + 1,
@@ -438,7 +439,7 @@ void	__zbx_zabbix_log(int level, const char *fmt, ...)
 				tm.tm_hour,
 				tm.tm_min,
 				tm.tm_sec,
-				milliseconds
+				milliseconds, ehbx_log_levels[level == 127 ? 0 : level]
 				);
 
 		va_start(args, fmt);
