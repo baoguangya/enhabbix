@@ -35,5 +35,5 @@ StartVMwareCollectors|0-250|0-2500
 
 3. Add log level description in each log record, e.g.:
 
- 26366:20200612:001906.576 WARNING  received configuration data from server at "172.0.0.0", datalen 28111
+ 26366:20200612:001906.576 **WARNING**  received configuration data from server at "172.0.0.0", datalen 28111
 
