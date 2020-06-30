@@ -32,7 +32,7 @@ static void	hc_add_item_values(dc_item_value_t *values, int values_num)
 			item->head = data;
 		}
 		
-		//添加以下语句块
+		/***添加以下语句块***/
 		switch (data->value_type)
 		{
 			case ITEM_VALUE_TYPE_FLOAT:
@@ -53,16 +53,16 @@ static void     hc_pop_items(zbx_vector_ptr_t *history_items)
 {
         zbx_binary_heap_elem_t  *elem;
         zbx_hc_item_t           *item;
-        zbx_hc_data_t   *ehbx_value;				//增加此行
-        size_t ehbx_popmsg_alloc = 0, ehbx_popmsg_offset = 0;	//增加此行
-        char *ehbx_popmsg = NULL;				//增加此行
+        zbx_hc_data_t   *ehbx_value;				/**增加此行**/
+        size_t ehbx_popmsg_alloc = 0, ehbx_popmsg_offset = 0;	/**增加此行**/
+        char *ehbx_popmsg = NULL;				/**增加此行**/
 
         while (ZBX_HC_SYNC_MAX > history_items->values_num && FAIL == zbx_binary_heap_empty(&cache->history_queue))
         {
                 elem = zbx_binary_heap_find_min(&cache->history_queue);
                 item = (zbx_hc_item_t *)elem->data;
                 zbx_vector_ptr_append(history_items, item);
-		//增加以下行
+		/**增加以下行**/
                 ehbx_value = item->tail;
                 zbx_snprintf_alloc(&ehbx_popmsg, &ehbx_popmsg_alloc, &ehbx_popmsg_offset, "poping values of ");	
                 while (NULL != ehbx_value)
@@ -94,7 +94,7 @@ static void     hc_pop_items(zbx_vector_ptr_t *history_items)
                 zabbix_log(LOG_LEVEL_DEBUG,"%s NULL",ehbx_popmsg);
                 zbx_free(ehbx_popmsg);
                 ehbx_popmsg_alloc = ehbx_popmsg_offset = 0;
-		//增加行结束
+		/**增加行结束**/
                 zbx_binary_heap_remove_min(&cache->history_queue);
         }
 }
@@ -105,14 +105,14 @@ void    hc_push_items(zbx_vector_ptr_t *history_items)
         int             i;
         zbx_hc_item_t   *item;
         zbx_hc_data_t   *data_free;
-        zbx_hc_data_t   *ehbx_value;				//增加此行
-        size_t ehbx_pushmsg_alloc=0, ehbx_pushmsg_offset=0;	//增加此行
-        char *ehbx_pushmsg = NULL;				//增加此行
+        zbx_hc_data_t   *ehbx_value;				/**增加此行**/
+        size_t ehbx_pushmsg_alloc=0, ehbx_pushmsg_offset=0;	/**增加此行**/
+        char *ehbx_pushmsg = NULL;				/**增加此行**/
 	
         for (i = 0; i < history_items->values_num; i++)
         {
                 item = (zbx_hc_item_t *)history_items->values[i];
-		//增加以下行
+		/**增加以下行**/
                 ehbx_value = item->tail;
                 zbx_snprintf_alloc(&ehbx_pushmsg, &ehbx_pushmsg_alloc, &ehbx_pushmsg_offset, "pushing values of ");
                 while (NULL != ehbx_value)
@@ -144,7 +144,7 @@ void    hc_push_items(zbx_vector_ptr_t *history_items)
                 zabbix_log(LOG_LEVEL_DEBUG,"%s NULL",ehbx_pushmsg);
                 zbx_free(ehbx_pushmsg);
                 ehbx_pushmsg_alloc = ehbx_pushmsg_offset = 0;
-		//增加行结束
+		/**增加行结束**/
                 switch (item->status)
                 {
                         case ZBX_HC_ITEM_STATUS_BUSY:
