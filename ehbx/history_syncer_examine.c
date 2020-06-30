@@ -87,11 +87,11 @@ static void     hc_pop_items(zbx_vector_ptr_t *history_items)
 				case ITEM_VALUE_TYPE_STR:
 				case ITEM_VALUE_TYPE_TEXT:
                         		zbx_snprintf_alloc(&ehbx_popmsg, &ehbx_popmsg_alloc, &ehbx_popmsg_offset, "itemid [%d] value [%s] ts [%d:%d]-->",
-                                		item->itemid,zbx_strdup(NULL, ehbx_value->value.str), ehbx_value->ts.sec, ehbx_value->ts.ns);
+                                		item->itemid, ehbx_value->value.str, ehbx_value->ts.sec, ehbx_value->ts.ns);
 					break;
 				case ITEM_VALUE_TYPE_LOG:
 					zbx_snprintf_alloc(&ehbx_popmsg, &ehbx_popmsg_alloc, &ehbx_popmsg_offset, "itemid [%d] value [%s] ts [%d:%d]-->",
-                                		item->itemid,zbx_strdup(NULL, ehbx_value->value.log->value), ehbx_value->ts.sec, ehbx_value->ts.ns);
+                                		item->itemid, ehbx_value->value.log->value, ehbx_value->ts.sec, ehbx_value->ts.ns);
 					break;
 				default:
 					break;
@@ -137,11 +137,11 @@ void    hc_push_items(zbx_vector_ptr_t *history_items)
 				case ITEM_VALUE_TYPE_STR:
 				case ITEM_VALUE_TYPE_TEXT:
                         		zbx_snprintf_alloc(&ehbx_pushmsg, &ehbx_pushmsg_alloc, &ehbx_pushmsg_offset, "itemid [%d] value [%s] ts [%d:%d]-->",
-                                		item->itemid, zbx_strdup(NULL, ehbx_value->value.str), ehbx_value->ts.sec,ehbx_value->ts.ns);
+                                		item->itemid, ehbx_value->value.str, ehbx_value->ts.sec,ehbx_value->ts.ns);
 					break;
 				case ITEM_VALUE_TYPE_LOG:
 					zbx_snprintf_alloc(&ehbx_pushmsg, &ehbx_pushmsg_alloc, &ehbx_pushmsg_offset, "itemid [%d] value [%s] ts [%d:%d]-->",
-                                		item->itemid, zbx_strdup(NULL, ehbx_value->value.log->value), ehbx_value->ts.sec,ehbx_value->ts.ns);
+                                		item->itemid, ehbx_value->value.log->value, ehbx_value->ts.sec,ehbx_value->ts.ns);
 					break;
 				default:
 					break;
