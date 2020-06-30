@@ -71,27 +71,27 @@ static void     hc_pop_items(zbx_vector_ptr_t *history_items)
                 zbx_vector_ptr_append(history_items, item);
 		/**增加以下行**/
                 ehbx_value = item->tail;
-                zbx_snprintf_alloc(&ehbx_popmsg, &ehbx_popmsg_alloc, &ehbx_popmsg_offset, "poping values of ");	
+                zbx_snprintf_alloc(&ehbx_popmsg, &ehbx_popmsg_alloc, &ehbx_popmsg_offset, "poping values of itemid [%d]: ", item->itemid);	
                 while (NULL != ehbx_value)
                 {
                         switch (ehbx_value->value_type)
 			{
 				case ITEM_VALUE_TYPE_FLOAT:
-					zbx_snprintf_alloc(&ehbx_popmsg, &ehbx_popmsg_alloc, &ehbx_popmsg_offset, "itemid [%d] value [%f] ts [%d:%d]-->",
-                                		item->itemid,ehbx_value->value.dbl, ehbx_value->ts.sec, ehbx_value->ts.ns);
+					zbx_snprintf_alloc(&ehbx_popmsg, &ehbx_popmsg_alloc, &ehbx_popmsg_offset, "value [%f] ts [%d:%d]-->",
+                                		ehbx_value->value.dbl, ehbx_value->ts.sec, ehbx_value->ts.ns);
 					break;
 				case ITEM_VALUE_TYPE_UINT64:
-					zbx_snprintf_alloc(&ehbx_popmsg, &ehbx_popmsg_alloc, &ehbx_popmsg_offset, "itemid [%d] value [%d] ts [%d:%d]-->",
-                                		item->itemid,ehbx_value->value.ui64, ehbx_value->ts.sec, ehbx_value->ts.ns);
+					zbx_snprintf_alloc(&ehbx_popmsg, &ehbx_popmsg_alloc, &ehbx_popmsg_offset, "value [%d] ts [%d:%d]-->",
+                                		ehbx_value->value.ui64, ehbx_value->ts.sec, ehbx_value->ts.ns);
 					break;
 				case ITEM_VALUE_TYPE_STR:
 				case ITEM_VALUE_TYPE_TEXT:
-                        		zbx_snprintf_alloc(&ehbx_popmsg, &ehbx_popmsg_alloc, &ehbx_popmsg_offset, "itemid [%d] value [%s] ts [%d:%d]-->",
-                                		item->itemid, ehbx_value->value.str, ehbx_value->ts.sec, ehbx_value->ts.ns);
+                        		zbx_snprintf_alloc(&ehbx_popmsg, &ehbx_popmsg_alloc, &ehbx_popmsg_offset, "value [%s] ts [%d:%d]-->",
+                                		ehbx_value->value.str, ehbx_value->ts.sec, ehbx_value->ts.ns);
 					break;
 				case ITEM_VALUE_TYPE_LOG:
-					zbx_snprintf_alloc(&ehbx_popmsg, &ehbx_popmsg_alloc, &ehbx_popmsg_offset, "itemid [%d] value [%s] ts [%d:%d]-->",
-                                		item->itemid, ehbx_value->value.log->value, ehbx_value->ts.sec, ehbx_value->ts.ns);
+					zbx_snprintf_alloc(&ehbx_popmsg, &ehbx_popmsg_alloc, &ehbx_popmsg_offset, "value [%s] ts [%d:%d]-->",
+                                		ehbx_value->value.log->value, ehbx_value->ts.sec, ehbx_value->ts.ns);
 					break;
 				default:
 					break;
@@ -121,27 +121,27 @@ void    hc_push_items(zbx_vector_ptr_t *history_items)
                 item = (zbx_hc_item_t *)history_items->values[i];
 		/**增加以下行**/
                 ehbx_value = item->tail;
-                zbx_snprintf_alloc(&ehbx_pushmsg, &ehbx_pushmsg_alloc, &ehbx_pushmsg_offset, "pushing values of ");
+                zbx_snprintf_alloc(&ehbx_pushmsg, &ehbx_pushmsg_alloc, &ehbx_pushmsg_offset, "pushing values of itemid [%d]:", item->itemid);
                 while (NULL != ehbx_value)
                 {
 			switch (ehbx_value->value_type)
 			{
 				case ITEM_VALUE_TYPE_FLOAT:
-					zbx_snprintf_alloc(&ehbx_pushmsg, &ehbx_pushmsg_alloc, &ehbx_pushmsg_offset, "itemid [%d] value [%f] ts [%d:%d]-->",
-                                		item->itemid, ehbx_value->value.dbl, ehbx_value->ts.sec,ehbx_value->ts.ns);
+					zbx_snprintf_alloc(&ehbx_pushmsg, &ehbx_pushmsg_alloc, &ehbx_pushmsg_offset, "value [%f] ts [%d:%d]-->",
+                                		ehbx_value->value.dbl, ehbx_value->ts.sec,ehbx_value->ts.ns);
 					break;
 				case ITEM_VALUE_TYPE_UINT64:
-					zbx_snprintf_alloc(&ehbx_pushmsg, &ehbx_pushmsg_alloc, &ehbx_pushmsg_offset, "itemid [%d] value [%d] ts [%d:%d]-->",
-                                		item->itemid, ehbx_value->value.ui64, ehbx_value->ts.sec,ehbx_value->ts.ns);
+					zbx_snprintf_alloc(&ehbx_pushmsg, &ehbx_pushmsg_alloc, &ehbx_pushmsg_offset, "value [%d] ts [%d:%d]-->",
+                                		ehbx_value->value.ui64, ehbx_value->ts.sec,ehbx_value->ts.ns);
 					break;
 				case ITEM_VALUE_TYPE_STR:
 				case ITEM_VALUE_TYPE_TEXT:
-                        		zbx_snprintf_alloc(&ehbx_pushmsg, &ehbx_pushmsg_alloc, &ehbx_pushmsg_offset, "itemid [%d] value [%s] ts [%d:%d]-->",
-                                		item->itemid, ehbx_value->value.str, ehbx_value->ts.sec,ehbx_value->ts.ns);
+                        		zbx_snprintf_alloc(&ehbx_pushmsg, &ehbx_pushmsg_alloc, &ehbx_pushmsg_offset, "value [%s] ts [%d:%d]-->",
+                                		ehbx_value->value.str, ehbx_value->ts.sec,ehbx_value->ts.ns);
 					break;
 				case ITEM_VALUE_TYPE_LOG:
-					zbx_snprintf_alloc(&ehbx_pushmsg, &ehbx_pushmsg_alloc, &ehbx_pushmsg_offset, "itemid [%d] value [%s] ts [%d:%d]-->",
-                                		item->itemid, ehbx_value->value.log->value, ehbx_value->ts.sec,ehbx_value->ts.ns);
+					zbx_snprintf_alloc(&ehbx_pushmsg, &ehbx_pushmsg_alloc, &ehbx_pushmsg_offset, "value [%s] ts [%d:%d]-->",
+                                		ehbx_value->value.log->value, ehbx_value->ts.sec,ehbx_value->ts.ns);
 					break;
 				default:
 					break;
