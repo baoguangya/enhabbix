@@ -36,13 +36,20 @@ static void	hc_add_item_values(dc_item_value_t *values, int values_num)
 		switch (data->value_type)
 		{
 			case ITEM_VALUE_TYPE_FLOAT:
-				zabbix_log(LOG_LEVEL_DEBUG, "pushing into history_queue: itemid [%d] value [%f]",item_value->itemid,item_value->value.value_dbl);
+				zabbix_log(LOG_LEVEL_DEBUG, "pushing into history_queue: itemid [%d] value [%f]",item_value->itemid,data->value.dbl);
 				break;
 			case ITEM_VALUE_TYPE_UINT64:
-				zabbix_log(LOG_LEVEL_DEBUG, "pushing into history_queue: itemid [%d] value [%d]",item_value->itemid,item_value->value.value_uint);
+				zabbix_log(LOG_LEVEL_DEBUG, "pushing into history_queue: itemid [%d] value [%d]",item_value->itemid,data->value.ui64);
+				break;
+			case ITEM_VALUE_TYPE_STR:
+			case ITEM_VALUE_TYPE_TEXT:
+				zabbix_log(LOG_LEVEL_DEBUG, "pushing into history_queue: itemid [%d] value [%s]",item_value->itemid,data->value.str);
+				break;
+			case ITEM_VALUE_TYPE_LOG:
+				zabbix_log(LOG_LEVEL_DEBUG, "pushing into history_queue: itemid [%d] value [%s]",item_value->itemid,data->value.log->value);
 				break;
 			default:
-				zabbix_log(LOG_LEVEL_DEBUG, "pushing into history_queue: itemid [%d] value [%s]",item_value->itemid,item_value->value.value_str);
+				break;
 		}
 		
 	}
