@@ -53,31 +53,48 @@ static void     hc_pop_items(zbx_vector_ptr_t *history_items)
 {
         zbx_binary_heap_elem_t  *elem;
         zbx_hc_item_t           *item;
-        zbx_hc_data_t   *ehbx_value;
-        size_t ehbx_popmsg_alloc=0, ehbx_popmsg_offset=0;
-        char *ehbx_popmsg=NULL;
+        zbx_hc_data_t   *ehbx_value;				//增加此行
+        size_t ehbx_popmsg_alloc = 0, ehbx_popmsg_offset = 0;	//增加此行
+        char *ehbx_popmsg = NULL;				//增加此行
 
         while (ZBX_HC_SYNC_MAX > history_items->values_num && FAIL == zbx_binary_heap_empty(&cache->history_queue))
         {
                 elem = zbx_binary_heap_find_min(&cache->history_queue);
                 item = (zbx_hc_item_t *)elem->data;
                 zbx_vector_ptr_append(history_items, item);
+		//增加以下行
                 ehbx_value = item->tail;
-
-                zbx_snprintf_alloc(&ehbx_popmsg, &ehbx_popmsg_alloc, &ehbx_popmsg_offset, "poping values of ");
-
+                zbx_snprintf_alloc(&ehbx_popmsg, &ehbx_popmsg_alloc, &ehbx_popmsg_offset, "poping values of ");	
                 while (NULL != ehbx_value)
                 {
-                        if (ehbx_value->value_type == ITEM_VALUE_TYPE_TEXT){
-                        zbx_snprintf_alloc(&ehbx_popmsg, &ehbx_popmsg_alloc, &ehbx_popmsg_offset, "itemid [%d] value [%s] ts [%d:%d]-->",
-                                item->itemid,zbx_strdup(NULL, ehbx_value->value.str), ehbx_value->ts.sec, ehbx_value->ts.ns);
+                        switch (ehbx_value->value_type)
+			{
+				case ITEM_VALUE_TYPE_FLOAT:
+					zbx_snprintf_alloc(&ehbx_popmsg, &ehbx_popmsg_alloc, &ehbx_popmsg_offset, "itemid [%d] value [%f] ts [%d:%d]-->",
+                                		item->itemid,ehbx_value->value.dbl, ehbx_value->ts.sec, ehbx_value->ts.ns);
+					break;
+				case ITEM_VALUE_TYPE_UINT64:
+					zbx_snprintf_alloc(&ehbx_popmsg, &ehbx_popmsg_alloc, &ehbx_popmsg_offset, "itemid [%d] value [%d] ts [%d:%d]-->",
+                                		item->itemid,ehbx_value->value.ui64, ehbx_value->ts.sec, ehbx_value->ts.ns);
+					break;
+				case ITEM_VALUE_TYPE_STR:
+				case ITEM_VALUE_TYPE_TEXT:
+                        		zbx_snprintf_alloc(&ehbx_popmsg, &ehbx_popmsg_alloc, &ehbx_popmsg_offset, "itemid [%d] value [%s] ts [%d:%d]-->",
+                                		item->itemid,zbx_strdup(NULL, ehbx_value->value.str), ehbx_value->ts.sec, ehbx_value->ts.ns);
+					break;
+				case ITEM_VALUE_TYPE_LOG:
+					zbx_snprintf_alloc(&ehbx_popmsg, &ehbx_popmsg_alloc, &ehbx_popmsg_offset, "itemid [%d] value [%s] ts [%d:%d]-->",
+                                		item->itemid,zbx_strdup(NULL, ehbx_value->value.log), ehbx_value->ts.sec, ehbx_value->ts.ns);
+					break;
+				default:
+					break;
                         }
                         ehbx_value = ehbx_value->next;
-
                 }
                 zabbix_log(LOG_LEVEL_DEBUG,"%s NULL",ehbx_popmsg);
                 zbx_free(ehbx_popmsg);
                 ehbx_popmsg_alloc = ehbx_popmsg_offset = 0;
+		//增加行结束
                 zbx_binary_heap_remove_min(&cache->history_queue);
         }
 }
@@ -88,29 +105,46 @@ void    hc_push_items(zbx_vector_ptr_t *history_items)
         int             i;
         zbx_hc_item_t   *item;
         zbx_hc_data_t   *data_free;
-        zbx_hc_data_t   *ehbx_value;
-        char *ehbx_pushmsg = NULL;
-        size_t ehbx_pushmsg_alloc=0, ehbx_pushmsg_offset=0;
-
+        zbx_hc_data_t   *ehbx_value;				//增加此行
+        size_t ehbx_pushmsg_alloc=0, ehbx_pushmsg_offset=0;	//增加此行
+        char *ehbx_pushmsg = NULL;				//增加此行
+	
         for (i = 0; i < history_items->values_num; i++)
         {
                 item = (zbx_hc_item_t *)history_items->values[i];
+		//增加以下行
                 ehbx_value = item->tail;
-
                 zbx_snprintf_alloc(&ehbx_pushmsg, &ehbx_pushmsg_alloc, &ehbx_pushmsg_offset, "pushing values of ");
-
                 while (NULL != ehbx_value)
                 {
-                        if (ehbx_value->value_type == ITEM_VALUE_TYPE_TEXT){
-                        zbx_snprintf_alloc(&ehbx_pushmsg, &ehbx_pushmsg_alloc, &ehbx_pushmsg_offset, "itemid [%d] value [%s] valuetype [%d] ts [%d:%d]-->",
-                                item->itemid, zbx_strdup(NULL, ehbx_value->value.str),ehbx_value->value_type,ehbx_value->ts.sec,ehbx_value->ts.ns);
+			switch (ehbx_value->value_type)
+			{
+				case ITEM_VALUE_TYPE_FLOAT:
+					zbx_snprintf_alloc(&ehbx_pushmsg, &ehbx_pushmsg_alloc, &ehbx_pushmsg_offset, "itemid [%d] value [%f] ts [%d:%d]-->",
+                                		item->itemid, ehbx_value->value.dbl, ehbx_value->ts.sec,ehbx_value->ts.ns);
+					break;
+				case ITEM_VALUE_TYPE_UINT64:
+					zbx_snprintf_alloc(&ehbx_pushmsg, &ehbx_pushmsg_alloc, &ehbx_pushmsg_offset, "itemid [%d] value [%d] ts [%d:%d]-->",
+                                		item->itemid, ehbx_value->value.ui64, ehbx_value->ts.sec,ehbx_value->ts.ns);
+					break;
+				case ITEM_VALUE_TYPE_STR:
+				case ITEM_VALUE_TYPE_TEXT:
+                        		zbx_snprintf_alloc(&ehbx_pushmsg, &ehbx_pushmsg_alloc, &ehbx_pushmsg_offset, "itemid [%d] value [%s] ts [%d:%d]-->",
+                                		item->itemid, zbx_strdup(NULL, ehbx_value->value.str), ehbx_value->ts.sec,ehbx_value->ts.ns);
+					break;
+				case ITEM_VALUE_TYPE_LOG:
+					zbx_snprintf_alloc(&ehbx_pushmsg, &ehbx_pushmsg_alloc, &ehbx_pushmsg_offset, "itemid [%d] value [%s] ts [%d:%d]-->",
+                                		item->itemid, zbx_strdup(NULL, ehbx_value->value.log), ehbx_value->ts.sec,ehbx_value->ts.ns);
+					break;
+				default:
+					break;
                         }
                         ehbx_value = ehbx_value->next;
                 }
                 zabbix_log(LOG_LEVEL_DEBUG,"%s NULL",ehbx_pushmsg);
                 zbx_free(ehbx_pushmsg);
                 ehbx_pushmsg_alloc = ehbx_pushmsg_offset = 0;
-
+		//增加行结束
                 switch (item->status)
                 {
                         case ZBX_HC_ITEM_STATUS_BUSY:
