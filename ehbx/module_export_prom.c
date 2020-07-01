@@ -23,5 +23,37 @@ void export_to_pushgateway(char *buffer)
     curl_easy_send(buffer);
   }
 }
+
+static void	dummy_history_float_cb(const ZBX_HISTORY_FLOAT *history, int history_num)
+{
+	int	i;
+	DC_ITEM			*items;
+	int			*errcodes;
+	zbx_uint64_t *itemids;
+
+	if (0 != history_num)
+	{
+		items = (DC_ITEM *)zbx_malloc(NULL, sizeof(DC_ITEM) * (size_t)history_num);
+		errcodes = (int *)zbx_malloc(NULL, sizeof(int) * (size_t)history_num);
+		itemids = (zbx_uint64_t *)zbx_malloc(NULL, sizeof(zbx_uint64_t) * (size_t)history_num);
+		
+		for (i=0; i< history_num; i++)
+			itemids[i] = history[i].itemid;
+		
+		LOCK_CACHE;	
+		DCconfig_get_items_by_itemids(items, itemids, errcodes, (size_t)history_num);
+		UNLOCK_CACHE;
+
+		for (i = 0; i < history_num; i++)
+		{
+			zabbix_log(LOG_LEVEL_WARNING, "exporting history: itemid[%d],key[%s],value[%f]", itemids[i],items[i].key_orig,history[i].value);		
+		}	
+
+		zbx_free(errcodes);
+		zbx_free(items);
+		zbx_free(itemids);
+	}
+}
+
   
     
