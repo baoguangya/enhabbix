@@ -43,7 +43,7 @@ int main(int argc, char **argv){
   unsigned char hd[4] = {'Z','B','X','D'};
   char buf_write[65536], buf_read[65536];
   uint32_t len, remain;
-  int i=0, offset=0;
+  int i=0, offset=0, written=0, recvd=0, bytes_sent=0, bytes_recvd=0;
   char *arg;
   int s, conn, res, uncomp, comp;
   struct sockaddr_in addr;
@@ -141,23 +141,32 @@ int main(int argc, char **argv){
   }
   
   fcntl(s, F_SETFD, FD_CLOEXEC);
-  
-  res = send(s, buf_write, offset,0);
-  if (res != offset){
-    printf("error while sending message, sent %d of %d in total\n", res, offset);
-    exit(1);
+  while (written < offset)
+  {
+    bytes_sent = send(s, buf_write+written, offset-written,0);
+    if (bytes_sent == -1)
+    {
+      printf("failed to send data, you have sent %d bytes\n", written);
+      exit(1);
+    }
+    written += bytes_sent;
   }
 
   memset(buf_read,0,sizeof(buf_read));
 
-  if((res = recv(s, buf_read, sizeof(buf_read),0)) < 0){
-    printf("error while receiving data\n");
-    exit(1);
+  while(0 != (bytes_recvd = recv(s, buf_read+recvd, sizeof(buf_read)-recvd,0)))
+  {
+    if (bytes_recvd == -1)
+    {
+      printf("error while receiving data, you have received %d bytes\n", recvd);
+      exit(1);
+    }
+    recvd += bytes_recvd;
   }
- 
+  
   if(buf_read[4] == 3){
     sz_out = big_endian(*((uint32_t*)buf_read + 9));
-    uncomp = uncompress((Bytef *)out, &sz_out, (const Bytef *) (buf_read + 13), res - 13);
+    uncomp = uncompress((Bytef *)out, &sz_out, (const Bytef *) (buf_read + 13), recvd - 13);
   
     if (uncomp == Z_OK){
       memcpy(buf_read + 13, out, sz_out);
@@ -166,7 +175,7 @@ int main(int argc, char **argv){
       exit(1);
     }
   } else {
-    sz_out = res - 13;
+    sz_out = recvd - 13;
   }
 
   printf("====================message received================================\n");  
@@ -180,4 +189,3 @@ int main(int argc, char **argv){
   printf("\n====================================================================\n");
 
 } 
-
