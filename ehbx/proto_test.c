@@ -129,7 +129,7 @@ int main(int argc, char **argv){
   }
   printf("\n====================================================================\n");
 
-  s = socket(AF_INET, SOCK_STREAM , 0);
+  s = socket(AF_INET, SOCK_STREAM | SOCK_CLOEXEC, 0);
   addr.sin_family =  AF_INET;
   addr.sin_addr.s_addr = inet_addr(ip);
   addr.sin_port = htons(atoi(port));
@@ -140,7 +140,7 @@ int main(int argc, char **argv){
     exit(1);
   }
   
-  fcntl(s, F_SETFD, FD_CLOEXEC);
+  //fcntl(s, F_SETFD, FD_CLOEXEC);
   while (written < offset)
   {
     bytes_sent = send(s, buf_write+written, offset-written,0);
